@@ -63,6 +63,14 @@
 									<mainClass>com.interzonedev.rabbitmqdemo.basic.Send</mainClass>
 									<name>basic_client</name>
 								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.workqueue.NewTask</mainClass>
+									<name>workqueue_newtask</name>
+								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.workqueue.Worker</mainClass>
+									<name>workqueue_worker</name>
+								</program>
 							</programs>
 						</configuration>
 					</execution>
