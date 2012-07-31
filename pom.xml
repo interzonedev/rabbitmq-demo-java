@@ -71,6 +71,14 @@
 									<mainClass>com.interzonedev.rabbitmqdemo.workqueue.Worker</mainClass>
 									<name>workqueue_worker</name>
 								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.pubsub.EmitLog</mainClass>
+									<name>pubsub_emitlog</name>
+								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.pubsub.ReceiveLogs</mainClass>
+									<name>pubsub_receivelogs</name>
+								</program>
 							</programs>
 						</configuration>
 					</execution>
