@@ -13,7 +13,7 @@ public class RPCClient {
 	private Connection connection;
 	private Channel channel;
 	private String requestQueueName = "rpc_queue";
-	private String replyQueueName;
+	private String responseQueueName;
 	private QueueingConsumer consumer;
 
 	public RPCClient() throws Exception {
@@ -22,23 +22,32 @@ public class RPCClient {
 		connection = factory.newConnection();
 		channel = connection.createChannel();
 
-		replyQueueName = channel.queueDeclare().getQueue();
+		responseQueueName = channel.queueDeclare().getQueue();
+		System.out.println("responseQueueName = " + responseQueueName);
+
 		consumer = new QueueingConsumer(channel);
-		String consumerTag = channel.basicConsume(replyQueueName, true, consumer);
+		String consumerTag = channel.basicConsume(responseQueueName, true, consumer);
 		System.out.println("consumerTag = " + consumerTag);
 	}
 
-	public String call(String message) throws Exception {
+	public String call(String request) throws Exception {
 		String response = null;
-		String corrId = UUID.randomUUID().toString();
 
-		BasicProperties props = new BasicProperties.Builder().correlationId(corrId).replyTo(replyQueueName).build();
+		String requestCorrelationId = UUID.randomUUID().toString();
+		System.out.println("requestCorrelationId = " + requestCorrelationId);
 
-		channel.basicPublish("", requestQueueName, props, message.getBytes());
+		BasicProperties requestProps = new BasicProperties.Builder().correlationId(requestCorrelationId)
+				.replyTo(responseQueueName).build();
+
+		channel.basicPublish("", requestQueueName, requestProps, request.getBytes());
 
 		while (true) {
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-			if (delivery.getProperties().getCorrelationId().equals(corrId)) {
+
+			String responseCorrelationId = delivery.getProperties().getCorrelationId();
+			System.out.println("responseCorrelationId = " + responseCorrelationId);
+
+			if (responseCorrelationId.equals(requestCorrelationId)) {
 				response = new String(delivery.getBody(), "UTF-8");
 				break;
 			}
@@ -75,7 +84,7 @@ public class RPCClient {
 	}
 
 	private static String getArg(String[] argv) {
-		String arg = "30";
+		String arg = "0";
 
 		if (argv.length > 0) {
 			String arg1 = argv[0];

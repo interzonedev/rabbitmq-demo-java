@@ -1,6 +1,7 @@
 package com.interzonedev.rabbitmqdemo.rpc;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -30,7 +31,8 @@ public class RPCServer {
 			connection = factory.newConnection();
 			channel = connection.createChannel();
 
-			channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
+			DeclareOk queueDeclare = channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
+			System.out.println("queueDeclare = " + queueDeclare);
 
 			channel.basicQos(1);
 
@@ -44,9 +46,12 @@ public class RPCServer {
 
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 
-				BasicProperties props = delivery.getProperties();
-				BasicProperties replyProps = new BasicProperties.Builder().correlationId(props.getCorrelationId())
-						.build();
+				BasicProperties requestProps = delivery.getProperties();
+
+				String correlationId = requestProps.getCorrelationId();
+				System.out.println("Received message with correlationId = " + correlationId);
+
+				BasicProperties responseProps = new BasicProperties.Builder().correlationId(correlationId).build();
 
 				try {
 					String message = new String(delivery.getBody(), "UTF-8");
@@ -58,9 +63,15 @@ public class RPCServer {
 					System.out.println(" [.] " + e.toString());
 					response = "";
 				} finally {
-					channel.basicPublish("", props.getReplyTo(), replyProps, response.getBytes("UTF-8"));
+					String replyTo = requestProps.getReplyTo();
+					System.out.println("replyTo = " + replyTo);
 
-					channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+					channel.basicPublish("", replyTo, responseProps, response.getBytes("UTF-8"));
+
+					long deliveryTag = delivery.getEnvelope().getDeliveryTag();
+					System.out.println("deliveryTag = " + deliveryTag);
+
+					channel.basicAck(deliveryTag, false);
 				}
 			}
 		} catch (Exception e) {
