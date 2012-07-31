@@ -87,7 +87,6 @@
 									<mainClass>com.interzonedev.rabbitmqdemo.routing.ReceiveLogsDirect</mainClass>
 									<name>routing_receivelogsdirect</name>
 								</program>
-
 								<program>
 									<mainClass>com.interzonedev.rabbitmqdemo.topic.ReceiveLogsTopic</mainClass>
 									<name>topic_receivelogstopic</name>
@@ -95,6 +94,14 @@
 								<program>
 									<mainClass>com.interzonedev.rabbitmqdemo.topic.EmitLogTopic</mainClass>
 									<name>topic_emitlogtopic</name>
+								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.rpc.RPCClient</mainClass>
+									<name>rpc_client</name>
+								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.rpc.RPCServer</mainClass>
+									<name>rpc_server</name>
 								</program>
 							</programs>
 						</configuration>
