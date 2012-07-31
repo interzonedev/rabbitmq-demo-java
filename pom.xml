@@ -79,6 +79,23 @@
 									<mainClass>com.interzonedev.rabbitmqdemo.pubsub.ReceiveLogs</mainClass>
 									<name>pubsub_receivelogs</name>
 								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.routing.EmitLogDirect</mainClass>
+									<name>routing_emitlogdirect</name>
+								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.routing.ReceiveLogsDirect</mainClass>
+									<name>routing_receivelogsdirect</name>
+								</program>
+
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.topic.ReceiveLogsTopic</mainClass>
+									<name>topic_receivelogstopic</name>
+								</program>
+								<program>
+									<mainClass>com.interzonedev.rabbitmqdemo.topic.EmitLogTopic</mainClass>
+									<name>topic_emitlogtopic</name>
+								</program>
 							</programs>
 						</configuration>
 					</execution>
